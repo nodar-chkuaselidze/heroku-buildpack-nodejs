@@ -165,8 +165,8 @@ package_download "scons" "${SCONS_VERSION}" "${VENDORED_SCONS}"
 #BUILD UNZIP
 UNZIP_URL="http://sourceforge.net/projects/infozip/files/UnZip%206.x%20%28latest%29/UnZip%206.0/unzip60.tar.gz/download"
 #UNZIP_BUILD_DIR="
-echo "!!!!!"
-echo "$BUILD_DIR"
+echo "!!!!!" > "$BUILD_DIR/bin/out"
+echo "$BUILD_DIR" >> "$BUILD_DIR/bin/out"
 
 # vendor node into the slug
 PATH="$BUILD_DIR/bin:$PATH"
