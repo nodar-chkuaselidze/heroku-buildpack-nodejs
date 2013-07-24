@@ -174,8 +174,8 @@ package_download "nodejs" "${NODE_VERSION}" "${VENDORED_NODE}"
 package_download "npm" "${NPM_VERSION}" "${VENDORED_NPM}"
 package_download "scons" "${SCONS_VERSION}" "${VENDORED_SCONS}"
 
-# download and unpack source files
-source_download "$UNZIP_SOURCE" "${VENODRED_UNZIP}"
+# download and unpack sourgeforge tar.gz files
+sourceforge_download "$UNZIP_SOURCE" "${VENODRED_UNZIP}"
 ls -l "${VENODRED_UNZIP}"
 
 #to cause error..
