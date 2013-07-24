@@ -101,6 +101,14 @@ function package_download() {
   curl $package -s -o - | tar xzf - -C $location
 }
 
+function source_download() {
+  from="$1"
+  location="$2"
+
+  mkdir -p $location
+  curl $from -s -o - | tar xzf - -C $location
+}
+
 function cat_npm_debug_log() {
   if [ -f $BUILD_DIR/npm-debug.log ]; then
     cat $BUILD_DIR/npm-debug.log
@@ -151,10 +159,14 @@ NODE_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/nodejs-${NODE_VERSION}.tgz"
 NPM_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/npm-${NPM_VERSION}.tgz"
 SCONS_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/scons-${SCONS_VERSION}.tgz"
 
+# Sources
+UNZIP_SOURCE="http://sourceforge.net/projects/infozip/files/UnZip%206.x%20%28latest%29/UnZip%206.0/unzip60.tar.gz/download"
+
 # vendor directories
 VENDORED_NODE="$(mktmpdir node)"
 VENDORED_NPM="$(mktmpdir npm)"
 VENDORED_SCONS="$(mktmpdir scons)"
+VENODRED_UNZIP="$(mktmpdir unzip)"
 
 # download and unpack packages
 echo "-----> Fetching Node.js binaries"
@@ -162,17 +174,22 @@ package_download "nodejs" "${NODE_VERSION}" "${VENDORED_NODE}"
 package_download "npm" "${NPM_VERSION}" "${VENDORED_NPM}"
 package_download "scons" "${SCONS_VERSION}" "${VENDORED_SCONS}"
 
-#BUILD UNZIP
-UNZIP_URL="http://sourceforge.net/projects/infozip/files/UnZip%206.x%20%28latest%29/UnZip%206.0/unzip60.tar.gz/download"
-#UNZIP_BUILD_DIR="
-echo "!!!!!" > "$BUILD_DIR/bin/out"
-echo "$BUILD_DIR" >> "$BUILD_DIR/bin/out"
+# download and unpack source files
+source_download "$UNZIP_SOURCE" "${VENODRED_UNZIP}"
+ls -l "${VENODRED_UNZIP}"
+
+#to cause error..
+echo "TMP" > "$BUILD_DIR/bin/out"
 
 # vendor node into the slug
 PATH="$BUILD_DIR/bin:$PATH"
 echo "-----> Vendoring node into slug"
 mkdir -p "$BUILD_DIR/bin"
 cp "$VENDORED_NODE/bin/node" "$BUILD_DIR/bin/node"
+
+#BUILD UNZIP
+#UNZIP_BUILD_DIR="
+
 
 # setting up paths for building
 PATH="$VENDORED_SCONS:$VENDORED_NODE/bin:$PATH"
