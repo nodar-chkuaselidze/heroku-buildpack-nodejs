@@ -189,24 +189,14 @@ sourceforge_download "${UNZIP_SOURCE}" "${VENODRED_UNZIP}"
 echo "-----> Building UNZIP..."
 build_unzip "${VENODRED_UNZIP}/unzip60"
 
-ls -l "${VENODRED_UNZIP}/unzip60/unzip"
-
 # vendor node into the slug
 PATH="$BUILD_DIR/bin:$PATH"
-echo "-----> Vendoring unzip into slug"
+echo "-----> Vendoring UNZIP into slug"
 mkdir -p "$BUILD_DIR/bin"
 cp "${VENODRED_UNZIP}/unzip60/unzip" "$BUILD_DIR/bin/unzip"
-ls -l "$BUILD_DIR/bin/"
-
-#to cause error..
-echo "TMP" > "$BUILD_DIR/bin/out/fafa"
 
 echo "-----> Vendoring node into slug"
 cp "$VENDORED_NODE/bin/node" "$BUILD_DIR/bin/node"
-
-#BUILD UNZIP
-#UNZIP_BUILD_DIR="
-
 
 # setting up paths for building
 PATH="$VENDORED_SCONS:$VENDORED_NODE/bin:$PATH"
