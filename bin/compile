@@ -101,12 +101,12 @@ function package_download() {
   curl $package -s -o - | tar xzf - -C $location
 }
 
-function source_download() {
+function sourceforge_download() {
   from="$1"
   location="$2"
 
   mkdir -p $location
-  curl $from -s -o - | tar xzf - -C $location
+  curl $from -s -L -o - | tar xzf - -C $location
 }
 
 function cat_npm_debug_log() {
