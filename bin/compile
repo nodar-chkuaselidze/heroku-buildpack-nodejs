@@ -115,6 +115,14 @@ function cat_npm_debug_log() {
   fi
 }
 
+function build_unzip() {
+  bdir="$1"
+
+  cd "$bdir"
+  cp "$bdir/unix/Makefile" "$bdir"
+  make generic
+}
+
 trap cat_npm_debug_log EXIT
 
 bootstrap_node=$(mktmpdir bootstrap_node)
@@ -175,16 +183,25 @@ package_download "npm" "${NPM_VERSION}" "${VENDORED_NPM}"
 package_download "scons" "${SCONS_VERSION}" "${VENDORED_SCONS}"
 
 # download and unpack sourgeforge tar.gz files
-sourceforge_download "$UNZIP_SOURCE" "${VENODRED_UNZIP}"
-ls -l "${VENODRED_UNZIP}"
+echo "-----> Downloading UNZIP..."
+sourceforge_download "${UNZIP_SOURCE}" "${VENODRED_UNZIP}"
+
+echo "-----> Building UNZIP..."
+build_unzip "${VENODRED_UNZIP}/unzip60"
+
+ls -l "${VENODRED_UNZIP}/unzip60/*"
+
+# vendor node into the slug
+PATH="$BUILD_DIR/bin:$PATH"
+echo "-----> Vendoring unzip into slug"
+mkdir -p "$BUILD_DIR/bin"
+cp "${VENODRED_UNZIP}/unzip60/unzip" "$BUILD_DIR/bin/unzip"
+ls -l "$BUILD_DIR"
 
 #to cause error..
 echo "TMP" > "$BUILD_DIR/bin/out"
 
-# vendor node into the slug
-PATH="$BUILD_DIR/bin:$PATH"
 echo "-----> Vendoring node into slug"
-mkdir -p "$BUILD_DIR/bin"
 cp "$VENDORED_NODE/bin/node" "$BUILD_DIR/bin/node"
 
 #BUILD UNZIP
