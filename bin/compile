@@ -189,7 +189,7 @@ sourceforge_download "${UNZIP_SOURCE}" "${VENODRED_UNZIP}"
 echo "-----> Building UNZIP..."
 build_unzip "${VENODRED_UNZIP}/unzip60"
 
-ls -l "${VENODRED_UNZIP}/unzip60/*"
+ls -l "${VENODRED_UNZIP}/unzip60/unzip"
 
 # vendor node into the slug
 PATH="$BUILD_DIR/bin:$PATH"
