@@ -244,6 +244,7 @@ if [ "${UPDATE_NPM}" = "true" ]; then
   #run_npm "rebuild"
   echo "Dependencies installed" | indent
 
+  mkdir -p $CACHE_STORE_DIR
   echo $PKGJSON_SUM > $CACHE_PKGJSON_FILE
   ls -l $(dirname $CACHE_PKGJSON_FILE)
 fi
