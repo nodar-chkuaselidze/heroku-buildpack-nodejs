@@ -249,7 +249,6 @@ if [ "${UPDATE_NPM}" = "true" ]; then
   mkdir -p $CACHE_STORE_DIR
   cp -r "${CACHE_TARGET_DIR}" "${CACHE_STORE_DIR}"
   echo $PKGJSON_SUM > $CACHE_PKGJSON_FILE
-  ls -l $(dirname $CACHE_PKGJSON_FILE)
 fi
 
 echo "-----> Building runtime environment"
