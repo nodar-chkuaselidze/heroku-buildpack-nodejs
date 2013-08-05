@@ -229,22 +229,25 @@ UPDATE_NPM="true"
 PKGJSON_SUM=$(md5sum "${BUILD_DIR}/package.json")
 CACHE_PKGJSON_FILE="${CACHE_DIR}/package.json.md5"
 
+echo "-----> Installing dependencies with npm"
 if [ -d ${CACHE_STORE_DIR} -a -f "${CACHE_PKGJSON_FILE}" ]; then
   CACHE_PKGJSON_SUM=$(cat "${CACHE_PKGJSON_FILE}")
-  echo "dir exists and cache file exists"
+  echo "Dependencies are CACHED.. copying.." | indent
 
-  if [ ${PKGJSON_SUM} = ${CACHE_PKGJSON_SUM} ]; then
+  if [ "${PKGJSON_SUM}" = "${CACHE_PKGJSON_SUM}" ]; then
+    cp -r "${CACHE_STORE_DIR}" "${CACHE_TARGET_DIR}"
     UPDATE_NPM="false"
   fi
 fi
 if [ "${UPDATE_NPM}" = "true" ]; then
+  echo "Dependencies are not CACHED.. so we install" | indent
   # install dependencies with npm
-  echo "-----> Installing dependencies with npm"
-  #run_npm "install --production"
-  #run_npm "rebuild"
+  run_npm "install --production"
+  run_npm "rebuild"
   echo "Dependencies installed" | indent
 
   mkdir -p $CACHE_STORE_DIR
+  cp -r "${CACHE_TARGET_DIR}" "${CACHE_STORE_DIR}"
   echo $PKGJSON_SUM > $CACHE_PKGJSON_FILE
   ls -l $(dirname $CACHE_PKGJSON_FILE)
 fi
