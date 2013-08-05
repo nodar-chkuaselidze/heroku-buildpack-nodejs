@@ -223,7 +223,7 @@ export CPPPATH="$INCLUDE_PATH:$CPPPATH"
 
 #check if we have cached node_modules for this package.json and NODE/NPM Version
 CACHE_STORE_DIR="$CACHE_DIR/node_modules/$NODE_VERSION/$NPM_VERSION"
-CACHE_TARGET_DIR="$BUILD_DIR/node_modules"
+CACHE_TARGET_DIR="$BUILD_DIR/"
 
 UPDATE_NPM="true"
 PKGJSON_SUM=$(md5sum "${BUILD_DIR}/package.json" | awk -F" " '{print $1}')
@@ -233,8 +233,6 @@ echo "-----> Installing dependencies with npm"
 if [ -d ${CACHE_STORE_DIR} -a -f "${CACHE_PKGJSON_FILE}" ]; then
   CACHE_PKGJSON_SUM=$(cat "${CACHE_PKGJSON_FILE}" | awk -F" " '{print $1}')
 
-  echo "${PKGJSON_SUM}"
-  echo "${CACHE_PKGJSON_SUM}"
   if [ "${PKGJSON_SUM}" = "${CACHE_PKGJSON_SUM}" ]; then
     echo "Dependencies are CACHED.. copying.." | indent
     cp -r "${CACHE_STORE_DIR}" "${CACHE_TARGET_DIR}"
@@ -249,7 +247,7 @@ if [ "${UPDATE_NPM}" = "true" ]; then
   echo "Dependencies installed" | indent
 
   mkdir -p $CACHE_STORE_DIR
-  cp -r "${CACHE_TARGET_DIR}" "${CACHE_STORE_DIR}"
+  cp -r "${CACHE_TARGET_DIR}/node_modules" "${CACHE_STORE_DIR}"
   echo $PKGJSON_SUM > $CACHE_PKGJSON_FILE
 fi
 
