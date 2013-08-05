@@ -196,22 +196,24 @@ package_download "scons" "${SCONS_VERSION}" "${VENDORED_SCONS}"
 ### UNZIP process START ###
 UNZIP_BUILD_PATH="${BUILD_DIR}/bin/unzip"
 UNZIP_CACHE_PATH="${CACHE_DIR}/bin/unzip"
+echo "-----> Processing UNZIP..."
 mkdir -p $(dirname $UNZIP_CACHE_PATH)
 if [ ! -f "${UNZIP_CACHE_PATH}" ];then
-  echo "unzip cache file does not exists, download and compile" | indent
+  echo "unzip cache file does not exist, download and compile" | indent
   echo "-----> Downloading UNZIP..."
   sourceforge_download "${UNZIP_SOURCE}" "${VENDORED_UNZIP}"
   echo "-----> Building UNZIP..."
   build_unzip "${VENDORED_UNZIP}/unzip60"
   echo "-----> Vendoring UNZIP into slug"
   cp "${VENDORED_UNZIP}/unzip60/unzip" "${UNZIP_BUILD_PATH}"
-  #echo "-----> Creating Cache of it"
-  #cp "${UNZIP_BUILD_PATH}" "${UNZIP_CACHE_PATH}"
+  echo "-----> Creating Cache of it"
+  cp "${UNZIP_BUILD_PATH}" "${UNZIP_CACHE_PATH}"
 else
-  echo "unzip cache file does exists, just copy" | indent
+  echo "unzip cache file exists, just copy" | indent
   cp "${UNZIP_CACHE_PATH}" "${UNZIP_BUILD_PATH}"
 fi
-echo `$UNZIP_BUILD_PATH -v`
+echo `$UNZIP_BUILD_PATH -v | head -n 1` | indent
+echo
 ### UNZIP process END ###
 
 # vendor node into the slug
