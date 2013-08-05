@@ -101,18 +101,19 @@ function package_download() {
   curl $package -s -o - | tar xzf - -C $location
 }
 
+function cat_npm_debug_log() {
+  if [ -f $BUILD_DIR/npm-debug.log ]; then
+    cat $BUILD_DIR/npm-debug.log
+  fi
+}
+
+### UNZIP functions START ###
 function sourceforge_download() {
   from="$1"
   location="$2"
 
   mkdir -p $location
   curl $from -s -L -o - | tar xzf - -C $location
-}
-
-function cat_npm_debug_log() {
-  if [ -f $BUILD_DIR/npm-debug.log ]; then
-    cat $BUILD_DIR/npm-debug.log
-  fi
 }
 
 function build_unzip() {
@@ -122,6 +123,7 @@ function build_unzip() {
   cp "$bdir/unix/Makefile" "$bdir"
   make generic
 }
+### UNZIP functions END ###
 
 trap cat_npm_debug_log EXIT
 
@@ -176,25 +178,40 @@ VENDORED_NPM="$(mktmpdir npm)"
 VENDORED_SCONS="$(mktmpdir scons)"
 VENODRED_UNZIP="$(mktmpdir unzip)"
 
+PATH="$BUILD_DIR/bin:$PATH"
+mkdir -p "$BUILD_DIR/bin"
+
+#if CACHE_DIR does not exists create it
+if [ ! -d "$CACHE_DIR" ];then
+  mkdir -p "$CACHE_DIR"
+fi
+
+
 # download and unpack packages
 echo "-----> Fetching Node.js binaries"
 package_download "nodejs" "${NODE_VERSION}" "${VENDORED_NODE}"
 package_download "npm" "${NPM_VERSION}" "${VENDORED_NPM}"
 package_download "scons" "${SCONS_VERSION}" "${VENDORED_SCONS}"
 
-# download and unpack sourgeforge tar.gz files
-echo "-----> Downloading UNZIP..."
-sourceforge_download "${UNZIP_SOURCE}" "${VENODRED_UNZIP}"
-
-echo "-----> Building UNZIP..."
-build_unzip "${VENODRED_UNZIP}/unzip60"
+### UNZIP process START ###
+UNZIP_BUILD_PATH="$BUILD_DIR/unzip"
+UNZIP_CACHE_PATH="$CACHE_DIR/unzip"
+if [ ! -f "$UNZIP_CACHE_PATH" ];then
+  echo "unzip cache file does not exists, download and compile" | indent
+  echo "-----> Downloading UNZIP..."
+  sourceforge_download "${UNZIP_SOURCE}" "${VENODRED_UNZIP}"
+  echo "-----> Building UNZIP..."
+  build_unzip "${VENODRED_UNZIP}/unzip60"
+  echo "-----> Vendoring UNZIP into slug"
+  cp "${VENODRED_UNZIP}/unzip60/unzip" "$BUILD_DIR/bin/unzip"
+else
+  echo "unzip cache file does exists, just copy" | indent
+  cp "$UNZIP_CACHE_PATH" "$UNZIP_BUILD_PATH"
+fi
+`$UNZIP_BUILD_PATH -v`
+### UNZIP process END ###
 
 # vendor node into the slug
-PATH="$BUILD_DIR/bin:$PATH"
-echo "-----> Vendoring UNZIP into slug"
-mkdir -p "$BUILD_DIR/bin"
-cp "${VENODRED_UNZIP}/unzip60/unzip" "$BUILD_DIR/bin/unzip"
-
 echo "-----> Vendoring node into slug"
 cp "$VENDORED_NODE/bin/node" "$BUILD_DIR/bin/node"
 
