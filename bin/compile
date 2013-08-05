@@ -194,19 +194,22 @@ package_download "npm" "${NPM_VERSION}" "${VENDORED_NPM}"
 package_download "scons" "${SCONS_VERSION}" "${VENDORED_SCONS}"
 
 ### UNZIP process START ###
-UNZIP_BUILD_PATH="$BUILD_DIR/unzip"
-UNZIP_CACHE_PATH="$CACHE_DIR/unzip"
-if [ ! -f "$UNZIP_CACHE_PATH" ];then
+UNZIP_BUILD_PATH="${BUILD_DIR}/bin/unzip"
+UNZIP_CACHE_PATH="${CACHE_DIR}/bin/unzip"
+mkdir -p $(dirname $UNZIP_CACHE_PATH)
+if [ ! -f "${UNZIP_CACHE_PATH}" ];then
   echo "unzip cache file does not exists, download and compile" | indent
-  echo "-----> Downloading UNZIP..." $VENDORED_UNZIP
+  echo "-----> Downloading UNZIP..."
   sourceforge_download "${UNZIP_SOURCE}" "${VENDORED_UNZIP}"
-  echo "-----> Building UNZIP..." $VENDORED_UNZIP
+  echo "-----> Building UNZIP..."
   build_unzip "${VENDORED_UNZIP}/unzip60"
-  echo "-----> Vendoring UNZIP into slug" $VENDORED_UNZIP
-  cp "${VENDORED_UNZIP}/unzip60/unzip" "${BUILD_DIR}/bin/unzip"
+  echo "-----> Vendoring UNZIP into slug"
+  cp "${VENDORED_UNZIP}/unzip60/unzip" "${UNZIP_BUILD_PATH}"
+  #echo "-----> Creating Cache of it"
+  #cp "${UNZIP_BUILD_PATH}" "${UNZIP_CACHE_PATH}"
 else
   echo "unzip cache file does exists, just copy" | indent
-  cp "$UNZIP_CACHE_PATH" "$UNZIP_BUILD_PATH"
+  cp "${UNZIP_CACHE_PATH}" "${UNZIP_BUILD_PATH}"
 fi
 `$UNZIP_BUILD_PATH -v`
 ### UNZIP process END ###
