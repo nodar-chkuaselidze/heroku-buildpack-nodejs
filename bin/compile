@@ -176,7 +176,7 @@ UNZIP_SOURCE="http://sourceforge.net/projects/infozip/files/UnZip%206.x%20%28lat
 VENDORED_NODE="$(mktmpdir node)"
 VENDORED_NPM="$(mktmpdir npm)"
 VENDORED_SCONS="$(mktmpdir scons)"
-VENODRED_UNZIP="$(mktmpdir unzip)"
+VENDORED_UNZIP="$(mktmpdir unzip)"
 
 PATH="$BUILD_DIR/bin:$PATH"
 mkdir -p "$BUILD_DIR/bin"
@@ -198,12 +198,12 @@ UNZIP_BUILD_PATH="$BUILD_DIR/unzip"
 UNZIP_CACHE_PATH="$CACHE_DIR/unzip"
 if [ ! -f "$UNZIP_CACHE_PATH" ];then
   echo "unzip cache file does not exists, download and compile" | indent
-  echo "-----> Downloading UNZIP..."
-  sourceforge_download "${UNZIP_SOURCE}" "${VENODRED_UNZIP}"
-  echo "-----> Building UNZIP..."
-  build_unzip "${VENODRED_UNZIP}/unzip60"
-  echo "-----> Vendoring UNZIP into slug"
-  cp "${VENODRED_UNZIP}/unzip60/unzip" "$BUILD_DIR/bin/unzip"
+  echo "-----> Downloading UNZIP..." $VENDORED_UNZIP
+  sourceforge_download "${UNZIP_SOURCE}" "${VENDORED_UNZIP}"
+  echo "-----> Building UNZIP..." $VENDORED_UNZIP
+  build_unzip "${VENDORED_UNZIP}/unzip60"
+  echo "-----> Vendoring UNZIP into slug" $VENDORED_UNZIP
+  cp "${VENDORED_UNZIP}/unzip60/unzip" "${BUILD_DIR}/bin/unzip"
 else
   echo "unzip cache file does exists, just copy" | indent
   cp "$UNZIP_CACHE_PATH" "$UNZIP_BUILD_PATH"
