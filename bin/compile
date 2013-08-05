@@ -211,9 +211,7 @@ else
   echo "unzip cache file does exists, just copy" | indent
   cp "${UNZIP_CACHE_PATH}" "${UNZIP_BUILD_PATH}"
 fi
-ls -l $(dirname $UNZIP_BUILD_PATH)
-echo "$UNZIP_BUILD_PATH"
-`$UNZIP_BUILD_PATH -v`
+echo `$UNZIP_BUILD_PATH -v`
 ### UNZIP process END ###
 
 # vendor node into the slug
