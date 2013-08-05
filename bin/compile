@@ -160,10 +160,6 @@ echo "Using Node.js version: ${NODE_VERSION}" | indent
 NPM_VERSION=$(package_resolve_version "npm")
 echo "Using npm version: ${NPM_VERSION}" | indent
 
-# cache directories
-CACHE_STORE_DIR="$CACHE_DIR/node_modules/$NODE_VERSION/$NPM_VERSION"
-CACHE_TARGET_DIR="$BUILD_DIR/node_modules"
-
 # s3 packages
 NODE_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/nodejs-${NODE_VERSION}.tgz"
 NPM_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/npm-${NPM_VERSION}.tgz"
@@ -225,15 +221,17 @@ INCLUDE_PATH="$VENDORED_NODE/include"
 export CPATH="$INCLUDE_PATH:$CPATH"
 export CPPPATH="$INCLUDE_PATH:$CPPPATH"
 
-#CACHE_STORE_DIR="$CACHE_DIR/node_modules/$NODE_VERSION/$NPM_VERSION"
-#CACHE_TARGET_DIR="$BUILD_DIR/node_modules"
 #check if we have cached node_modules for this package.json and NODE/NPM Version
+CACHE_STORE_DIR="$CACHE_DIR/node_modules/$NODE_VERSION/$NPM_VERSION"
+CACHE_TARGET_DIR="$BUILD_DIR/node_modules"
+
 UPDATE_NPM="true"
 PKGJSON_SUM=$(md5sum "${BUILD_DIR}/package.json")
 CACHE_PKGJSON_FILE="${CACHE_DIR}/package.json.md5"
-echo $PKGJSON_SUM
+
 if [ -d ${CACHE_STORE_DIR} -a -f "${CACHE_PKGJSON_FILE}" ]; then
   CACHE_PKGJSON_SUM=$(cat "${CACHE_PKGJSON_FILE}")
+  echo "dir exists and cache file exists"
 
   if [ ${PKGJSON_SUM} = ${CACHE_PKGJSON_SUM} ]; then
     UPDATE_NPM="false"
@@ -247,6 +245,7 @@ if [ "${UPDATE_NPM}" = "true" ]; then
   echo "Dependencies installed" | indent
 
   echo $PKGJSON_SUM > $CACHE_PKGJSON_FILE
+  ls -l $(dirname $CACHE_PKGJSON_FILE)
 fi
 
 #cause error..
