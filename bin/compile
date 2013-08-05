@@ -232,9 +232,11 @@ CACHE_PKGJSON_FILE="${CACHE_DIR}/package.json.md5"
 echo "-----> Installing dependencies with npm"
 if [ -d ${CACHE_STORE_DIR} -a -f "${CACHE_PKGJSON_FILE}" ]; then
   CACHE_PKGJSON_SUM=$(cat "${CACHE_PKGJSON_FILE}")
-  echo "Dependencies are CACHED.. copying.." | indent
 
+  echo "${PKGJSON_SUM}"
+  echo "${CACHE_PKGJSON_SUM}"
   if [ "${PKGJSON_SUM}" = "${CACHE_PKGJSON_SUM}" ]; then
+    echo "Dependencies are CACHED.. copying.." | indent
     cp -r "${CACHE_STORE_DIR}" "${CACHE_TARGET_DIR}"
     UPDATE_NPM="false"
   fi
