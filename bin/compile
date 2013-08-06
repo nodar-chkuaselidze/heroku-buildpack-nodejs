@@ -246,10 +246,13 @@ if [ "${UPDATE_NPM}" = "true" ]; then
   run_npm "rebuild"
   echo "Dependencies installed" | indent
 
-  mkdir -p $CACHE_STORE_DIR
-  echo "Removing old CACHE" | indent
-  rm -r "${CACHE_STORE_DIR}/*"
+  if [ -d "${CACHE_DIR}/node_modules" ]; then
+    echo "Removing old CACHE" | indent
+    rm -r "${CACHE_DIR}/node_modules"
+  fi
+
   echo "Creating new CACHE" | indent
+  mkdir -p $CACHE_STORE_DIR
   cp -r "${CACHE_TARGET_DIR}/node_modules" "${CACHE_STORE_DIR}"
   echo $PKGJSON_SUM > $CACHE_PKGJSON_FILE
 fi
