@@ -231,16 +231,18 @@ CACHE_PKGJSON_FILE="${CACHE_DIR}/package.json.md5"
 
 echo "-----> Installing dependencies with npm"
 if [ -d ${CACHE_STORE_DIR} -a -f "${CACHE_PKGJSON_FILE}" ]; then
-  CACHE_PKGJSON_SUM=$(cat "${CACHE_PKGJSON_FILE}" | awk -F" " '{print $1}')
+  CACHE_PKGJSON_SUM=$(cat "${CACHE_PKGJSON_FILE}")
 
   if [ "${PKGJSON_SUM}" = "${CACHE_PKGJSON_SUM}" ]; then
     echo "Dependencies are CACHED.. copying.." | indent
     cp -r "${CACHE_STORE_DIR}/node_modules" "${CACHE_TARGET_DIR}"
     UPDATE_NPM="false"
+  else
+    echo "Cache is old.." | indent
   fi
 fi
 if [ "${UPDATE_NPM}" = "true" ]; then
-  echo "Dependencies are not CACHED.. so we install" | indent
+  echo "Dependencies install" | indent
   # install dependencies with npm
   run_npm "install --production"
   run_npm "rebuild"
