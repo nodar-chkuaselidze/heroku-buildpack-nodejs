@@ -144,6 +144,7 @@ engine_requests["node"]=$(package_engine_version "node")
 engine_versions["npm"]=$(manifest_versions "npm")
 engine_requests["npm"]=$(package_engine_version "npm")
 
+echo "-----> Buildpack edit, by Nodari Chkuaselidze"
 echo "-----> Resolving engine versions"
 
 # add a warning if no version of node specified
