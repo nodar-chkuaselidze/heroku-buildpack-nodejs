@@ -247,6 +247,7 @@ if [ "${UPDATE_NPM}" = "true" ]; then
   echo "Dependencies installed" | indent
 
   mkdir -p $CACHE_STORE_DIR
+  rm -r "${CACHE_STORE_DIR}/*"
   cp -r "${CACHE_TARGET_DIR}/node_modules" "${CACHE_STORE_DIR}"
   echo $PKGJSON_SUM > $CACHE_PKGJSON_FILE
 fi
