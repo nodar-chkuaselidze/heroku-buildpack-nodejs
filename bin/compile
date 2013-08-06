@@ -228,6 +228,7 @@ CACHE_TARGET_DIR="$BUILD_DIR/"
 
 UPDATE_NPM="true"
 PKGJSON_SUM=$(md5sum "${BUILD_DIR}/package.json" | awk -F" " '{print $1}')
+PKGJSON_CACHE_VERSION=$($BUILD_DIR/package.json | $bootstrap_node/bin/node $LP_DIR/vendor/json/json "heroku-cache" 2>/dev/null)
 CACHE_PKGJSON_FILE="${CACHE_DIR}/package.json.md5"
 
 echo "-----> Installing dependencies with npm"
