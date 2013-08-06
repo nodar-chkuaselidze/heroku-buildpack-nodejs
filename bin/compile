@@ -232,6 +232,7 @@ PKGJSON_CACHE_VERSION=$(cat $BUILD_DIR/package.json | $bootstrap_node/bin/node $
 PKGJSON_CACHE_SUM=$(echo "$PKGJSON_CACHE_VERSION" | md5sum | awk -F" " '{print $1}')
 CACHE_PKGJSON_FILE="${CACHE_DIR}/package.json.md5"
 
+echo $PKGJSON_CACHE_VERSION
 echo $PKGJSON_CACHE_SUM
 
 
