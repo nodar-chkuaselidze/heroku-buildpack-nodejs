@@ -107,24 +107,6 @@ function cat_npm_debug_log() {
   fi
 }
 
-### UNZIP functions START ###
-function sourceforge_download() {
-  from="$1"
-  location="$2"
-
-  mkdir -p $location
-  curl $from -s -L -o - | tar xzf - -C $location
-}
-
-function build_unzip() {
-  bdir="$1"
-
-  cd "$bdir"
-  cp "$bdir/unix/Makefile" "$bdir"
-  make generic
-}
-### UNZIP functions END ###
-
 trap cat_npm_debug_log EXIT
 
 bootstrap_node=$(mktmpdir bootstrap_node)
@@ -166,14 +148,10 @@ NODE_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/nodejs-${NODE_VERSION}.tgz"
 NPM_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/npm-${NPM_VERSION}.tgz"
 SCONS_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/scons-${SCONS_VERSION}.tgz"
 
-# Sources
-UNZIP_SOURCE="http://sourceforge.net/projects/infozip/files/UnZip%206.x%20%28latest%29/UnZip%206.0/unzip60.tar.gz/download"
-
 # vendor directories
 VENDORED_NODE="$(mktmpdir node)"
 VENDORED_NPM="$(mktmpdir npm)"
 VENDORED_SCONS="$(mktmpdir scons)"
-VENDORED_UNZIP="$(mktmpdir unzip)"
 
 PATH="$BUILD_DIR/bin:$PATH"
 mkdir -p "$BUILD_DIR/bin"
@@ -189,28 +167,6 @@ echo "-----> Fetching Node.js binaries"
 package_download "nodejs" "${NODE_VERSION}" "${VENDORED_NODE}"
 package_download "npm" "${NPM_VERSION}" "${VENDORED_NPM}"
 package_download "scons" "${SCONS_VERSION}" "${VENDORED_SCONS}"
-
-### UNZIP process START ###
-UNZIP_BUILD_PATH="${BUILD_DIR}/bin/unzip"
-UNZIP_CACHE_PATH="${CACHE_DIR}/bin/unzip"
-echo "-----> Processing UNZIP..."
-mkdir -p $(dirname $UNZIP_CACHE_PATH)
-if [ ! -f "${UNZIP_CACHE_PATH}" ];then
-  echo "unzip cache file does not exist, download and compile" | indent
-  echo "-----> Downloading UNZIP..."
-  sourceforge_download "${UNZIP_SOURCE}" "${VENDORED_UNZIP}"
-  echo "-----> Building UNZIP..."
-  build_unzip "${VENDORED_UNZIP}/unzip60"
-  echo "-----> Vendoring UNZIP into slug"
-  cp "${VENDORED_UNZIP}/unzip60/unzip" "${UNZIP_BUILD_PATH}"
-  echo "-----> Creating Cache of it"
-  cp "${UNZIP_BUILD_PATH}" "${UNZIP_CACHE_PATH}"
-else
-  echo "unzip cache file exists, just copying" | indent
-  cp "${UNZIP_CACHE_PATH}" "${UNZIP_BUILD_PATH}"
-fi
-echo `$UNZIP_BUILD_PATH -v | head -n 1` | indent
-### UNZIP process END ###
 
 # vendor node into the slug
 echo "-----> Vendoring node into slug"
